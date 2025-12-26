@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 
+import { analyzeLogs } from '@/lib/diagnosisRules';
+
 export default function DiagnosePage() {
     const [logs, setLogs] = useState('');
     const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -17,46 +19,24 @@ export default function DiagnosePage() {
         setIsAnalyzing(true);
         setResult(null);
 
-        // Simulate AI Analysis
+        // Simulate "Processing" feel, but use real logic
         setTimeout(() => {
             setIsAnalyzing(false);
-            // Mock result logic based on keywords
-            const lowerLogs = logs.toLowerCase();
-            let type = 'Unknown';
-            let confidence = 0;
-            let suggestions = [];
+            const analysis = analyzeLogs(logs);
 
-            if (lowerLogs.includes('nan') || lowerLogs.includes('overflow')) {
-                type = 'NaN / Divergence';
-                confidence = 98;
-                suggestions = [
-                    { id: 1, text: "Check for FP16 overflow. Try switching to BF16 if supported." },
-                    { id: 2, text: "Reduce learning rate or increase warmup steps." }
-                ];
-            } else if (lowerLogs.includes('out of memory') || lowerLogs.includes('oom')) {
-                type = 'OOM (Out of Memory)';
-                confidence = 95;
-                suggestions = [
-                    { id: 1, text: "Enable Gradient Checkpointing (saves ~60% VRAM)." },
-                    { id: 2, text: "Use ZeRO-3 Offload to move optimizer states to CPU." }
-                ];
-            } else if (lowerLogs.includes('timeout') || lowerLogs.includes('watchdog')) {
-                type = 'Distributed Deadlock';
-                confidence = 88;
-                suggestions = [
-                    { id: 1, text: "Check rank 0 specific logic (saving checkpoints, logging)." },
-                    { id: 2, text: "Increase NCCL_TIMEOUT environment variable." }
-                ];
+            if (analysis) {
+                setResult(analysis);
             } else {
-                type = 'Configuration Error';
-                confidence = 60;
-                suggestions = [
-                    { id: 1, text: "Review batch size and sequence length constraints." }
-                ];
+                setResult({
+                    type: 'Unknown / Generic Error',
+                    confidence: 20,
+                    suggestions: [
+                        { id: 1, text: "We couldn't match a specific signature in our database." },
+                        { id: 2, text: "Try searching the Failure Database manually." }
+                    ]
+                });
             }
-
-            setResult({ type, confidence, suggestions });
-        }, 2000);
+        }, 600);
     };
 
     return (

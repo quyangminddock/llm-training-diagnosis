@@ -3,16 +3,31 @@ import { notFound } from 'next/navigation';
 import { mockFailureCases } from '@/lib/mockData';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { CopyButton } from '@/components/ui/CopyButton';
+import type { Metadata } from 'next';
 
-// Correctly typing params for Next.js App Router dynamic routes
 interface PageProps {
     params: {
         id: string;
     };
 }
 
-// In Next 13+ App Router, data fetching for static params (generateStaticParams) is recommended for static exports, 
-// but for this dynamic MVP, we can just find inline.
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const failureCase = mockFailureCases.find(c => c.id === params.id);
+    if (!failureCase) return { title: 'Case Not Found' };
+
+    return {
+        title: `${failureCase.title} - LLM Training Fix`,
+        description: `How to fix ${failureCase.failure_type} in ${failureCase.environment.framework} with ${failureCase.environment.precision}. Verified solution for: ${failureCase.summary}`,
+        openGraph: {
+            title: failureCase.title,
+            description: failureCase.summary,
+            type: 'article',
+            authors: ['AI Infra Engineers']
+        }
+    };
+}
+
 export default function CaseDetailPage({ params }: PageProps) {
     const failureCase = mockFailureCases.find(c => c.id === params.id);
 
@@ -20,8 +35,25 @@ export default function CaseDetailPage({ params }: PageProps) {
         notFound();
     }
 
+    const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "TechArticle",
+        "headline": failureCase.title,
+        "description": failureCase.summary,
+        "articleSection": "Engineering",
+        "keywords": `${failureCase.failure_type}, ${failureCase.environment.framework}, LLM Training`,
+        "author": {
+            "@type": "Organization",
+            "name": "LLM Diagnosis DB"
+        }
+    };
+
     return (
         <div className="container py-8">
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            />
             <Link href="/cases" className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] mb-6 inline-block text-sm">
                 ← Back to Database
             </Link>
@@ -46,9 +78,12 @@ export default function CaseDetailPage({ params }: PageProps) {
 
                     {/* Logs Section */}
                     <section className="mb-8">
-                        <h2 className="text-xl font-bold mb-4 text-[var(--text-inverse)] flex items-center gap-2">
-                            📄 Error Logs
-                        </h2>
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-bold text-[var(--text-inverse)] flex items-center gap-2">
+                                📄 Error Logs
+                            </h2>
+                            <CopyButton text={failureCase.logs} />
+                        </div>
                         <div className="relative group">
                             <pre className="overflow-x-auto p-4 rounded bg-[var(--bg-secondary)] border border-[var(--border-default)] text-sm text-[var(--text-secondary)] font-mono whitespace-pre-wrap">
                                 {failureCase.logs}
@@ -59,9 +94,12 @@ export default function CaseDetailPage({ params }: PageProps) {
                     {/* Config Section */}
                     {failureCase.config_snippet && (
                         <section className="mb-8">
-                            <h2 className="text-xl font-bold mb-4 text-[var(--text-inverse)] flex items-center gap-2">
-                                ⚙️ Relevant Config
-                            </h2>
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-xl font-bold text-[var(--text-inverse)] flex items-center gap-2">
+                                    ⚙️ Relevant Config
+                                </h2>
+                                <CopyButton text={failureCase.config_snippet} />
+                            </div>
                             <pre className="overflow-x-auto p-4 rounded bg-[var(--bg-secondary)] border border-[var(--border-default)] text-sm text-[var(--text-secondary)] font-mono">
                                 {failureCase.config_snippet}
                             </pre>
