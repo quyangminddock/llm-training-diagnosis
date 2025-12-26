@@ -59,6 +59,97 @@ export const diagnosisRules: DiagnosisRule[] = [
             { id: 1, text: "Rerun with `CUDA_LAUNCH_BLOCKING=1` to get the real error stack trace." },
             { id: 2, text: "Check for out-of-bounds embedding indices (vocab size mismatch)." }
         ]
+    },
+    {
+        id: "fsdp_hang",
+        pattern: /(fsdp.*hang|fsdp.*stuck|waiting for.*fsdp)/i,
+        failureType: "FSDP Deadlock",
+        confidence: 88,
+        suggestions: [
+            { id: 1, text: "Ensure all ranks execute FSDP wrapping simultaneously." },
+            { id: 2, text: "Add `dist.barrier()` after any rank-specific code paths." }
+        ]
+    },
+    {
+        id: "memory_leak",
+        pattern: /(memory.*leak|memory.*increasing|memory.*grow)/i,
+        failureType: "Memory Leak",
+        confidence: 75,
+        suggestions: [
+            { id: 1, text: "Use `.detach().item()` when logging loss values." },
+            { id: 2, text: "Clear CUDA cache periodically with `torch.cuda.empty_cache()`." },
+            { id: 3, text: "Check for tensors being appended to lists without detaching." }
+        ]
+    },
+    {
+        id: "tokenizer_mismatch",
+        pattern: /(vocab.*mismatch|embedding.*mismatch|unknown.*token)/i,
+        failureType: "Tokenizer/Model Mismatch",
+        confidence: 90,
+        suggestions: [
+            { id: 1, text: "Ensure tokenizer is loaded from the same checkpoint as the model." },
+            { id: 2, text: "Check if special tokens (BOS, EOS, PAD) are correctly configured." }
+        ]
+    },
+    {
+        id: "gradient_underflow",
+        pattern: /(underflow|grad.*zero|gradient.*vanish)/i,
+        failureType: "Gradient Underflow",
+        confidence: 80,
+        suggestions: [
+            { id: 1, text: "Increase learning rate or use gradient scaling." },
+            { id: 2, text: "Check for dead ReLU neurons or layer norm issues." }
+        ]
+    },
+    {
+        id: "checkpoint_corrupted",
+        pattern: /(checkpoint.*corrupt|load.*failed|unpickl)/i,
+        failureType: "Corrupted Checkpoint",
+        confidence: 92,
+        suggestions: [
+            { id: 1, text: "Re-download or re-save the checkpoint file." },
+            { id: 2, text: "Use `torch.load(..., weights_only=True)` for safer loading." }
+        ]
+    },
+    {
+        id: "distributed_mismatch",
+        pattern: /(rank.*mismatch|world.*size|process.*group)/i,
+        failureType: "Distributed Setup Error",
+        confidence: 85,
+        suggestions: [
+            { id: 1, text: "Verify `WORLD_SIZE` and `RANK` environment variables." },
+            { id: 2, text: "Ensure all nodes can communicate via the master address." }
+        ]
+    },
+    {
+        id: "learning_rate_issue",
+        pattern: /(lr.*too|learning.*rate.*high|learning.*rate.*low)/i,
+        failureType: "Learning Rate Issue",
+        confidence: 70,
+        suggestions: [
+            { id: 1, text: "Try learning rate finder to identify optimal LR range." },
+            { id: 2, text: "Use warmup with cosine decay schedule." }
+        ]
+    },
+    {
+        id: "batch_size_issue",
+        pattern: /(batch.*too.*large|batch.*size.*memory)/i,
+        failureType: "Batch Size Issue",
+        confidence: 88,
+        suggestions: [
+            { id: 1, text: "Reduce per-device batch size and increase gradient accumulation steps." },
+            { id: 2, text: "Enable mixed precision training to fit larger batches." }
+        ]
+    },
+    {
+        id: "infiniband_error",
+        pattern: /(ibv_|infiniband|rdma.*fail)/i,
+        failureType: "InfiniBand/Network Error",
+        confidence: 82,
+        suggestions: [
+            { id: 1, text: "Disable InfiniBand with `export NCCL_IB_DISABLE=1`." },
+            { id: 2, text: "Check IB driver compatibility and NCCL version." }
+        ]
     }
 ];
 

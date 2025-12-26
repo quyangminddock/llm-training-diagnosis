@@ -1,6 +1,6 @@
 export type FailureType = 'NaN' | 'OOM' | 'Deadlock' | 'NotConverging';
-export type Framework = 'PyTorch' | 'DeepSpeed' | 'FSDP';
-export type Precision = 'fp16' | 'bf16' | 'fp32';
+export type Framework = 'PyTorch' | 'DeepSpeed' | 'FSDP' | 'vLLM';
+export type Precision = 'fp16' | 'bf16' | 'fp32' | 'nf4';
 
 export interface Environment {
     framework: Framework;

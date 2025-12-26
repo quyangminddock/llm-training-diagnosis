@@ -4,18 +4,9 @@ import { Navbar } from '@/components/layout/Navbar'
 import { CommandMenu } from '@/components/layout/CommandMenu'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: new URL('https://ltd.minddock.ai'),
   title: 'LLM Training Failure Diagnosis',
   description: 'A tool for diagnosing large model training failures.',
-  openGraph: {
-    images: [
-      {
-        url: '/api/og',
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
 }
 
 export default function RootLayout({

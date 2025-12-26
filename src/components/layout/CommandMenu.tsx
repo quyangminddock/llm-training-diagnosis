@@ -3,12 +3,12 @@
 import * as React from "react";
 import { Command } from "cmdk";
 import { useRouter } from "next/navigation";
-import { 
-  Calculator, 
-  Search, 
-  FileText, 
-  Home, 
-  Laptop, 
+import {
+  Calculator,
+  Search,
+  FileText,
+  Home,
+  Laptop,
   Github,
   Moon,
   Sun
@@ -16,7 +16,13 @@ import {
 
 export function CommandMenu() {
   const [open, setOpen] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
   const router = useRouter();
+
+  // Prevent hydration mismatch by only rendering after client mount
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   React.useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -35,6 +41,9 @@ export function CommandMenu() {
     command();
   }, []);
 
+  // Don't render anything on server
+  if (!mounted) return null;
+
   return (
     <Command.Dialog
       open={open}
@@ -42,19 +51,22 @@ export function CommandMenu() {
       label="Global Command Menu"
       className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[640px] bg-[var(--bg-card)] border border-[var(--border-default)] rounded-xl shadow-2xl overflow-hidden z-[9999]"
     >
+      {/* Visually hidden title for screen readers */}
+      <div className="sr-only" role="heading" aria-level={2}>Command Menu</div>
+
       <div className="flex items-center border-b border-[var(--border-default)] px-3" cmdk-input-wrapper="">
         <Search className="w-5 h-5 text-[var(--text-secondary)] mr-2" />
-        <Command.Input 
+        <Command.Input
           placeholder="Type a command or search..."
           className="flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-[var(--text-secondary)] text-[var(--text-primary)]"
         />
         <div className="flex items-center gap-1">
-            <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-[var(--border-default)] bg-[var(--bg-secondary)] px-1.5 font-mono text-[10px] font-medium text-[var(--text-secondary)] opacity-100">
-                <span className="text-xs">Esc</span>
-            </kbd>
+          <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border border-[var(--border-default)] bg-[var(--bg-secondary)] px-1.5 font-mono text-[10px] font-medium text-[var(--text-secondary)] opacity-100">
+            <span className="text-xs">Esc</span>
+          </kbd>
         </div>
       </div>
-      
+
       <Command.List className="max-h-[300px] overflow-y-auto overflow-x-hidden p-2 scroll-py-2">
         <Command.Empty className="py-6 text-center text-sm text-[var(--text-secondary)]">
           No results found.
@@ -92,7 +104,7 @@ export function CommandMenu() {
         </Command.Group>
 
         <Command.Group heading="Resources" className="text-xs font-medium text-[var(--text-secondary)] mb-2 px-2 mt-2">
-           <Command.Item
+          <Command.Item
             onSelect={() => runCommand(() => window.open("https://github.com", "_blank"))}
             className="flex items-center gap-2 px-2 py-2 text-sm text-[var(--text-primary)] rounded-md cursor-pointer hover:bg-[var(--bg-hover)] aria-selected:bg-[var(--bg-hover)]"
           >

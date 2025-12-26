@@ -1,8 +1,10 @@
 import { MetadataRoute } from 'next';
 import { mockFailureCases } from '@/lib/mockData';
 
+export const dynamic = 'force-static';
+
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://llm-diagnosis.com'; // Replace with actual domain
+    const baseUrl = 'https://ltd.minddock.ai';
 
     const staticRoutes = [
         '',

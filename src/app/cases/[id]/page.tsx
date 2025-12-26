@@ -12,8 +12,16 @@ interface PageProps {
     };
 }
 
+// Generate static paths for all cases
+export async function generateStaticParams() {
+    return mockFailureCases.map((c) => ({
+        id: c.id,
+    }));
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const failureCase = mockFailureCases.find(c => c.id === params.id);
+    const { id } = await params;
+    const failureCase = mockFailureCases.find(c => c.id === id);
     if (!failureCase) return { title: 'Case Not Found' };
 
     return {
@@ -24,19 +32,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             description: failureCase.summary,
             type: 'article',
             authors: ['AI Infra Engineers'],
-            images: [
-                {
-                    url: `/api/og?title=${encodeURIComponent(failureCase.title)}&type=${encodeURIComponent(failureCase.failure_type)}`,
-                    width: 1200,
-                    height: 630,
-                }
-            ]
         }
     };
 }
 
-export default function CaseDetailPage({ params }: PageProps) {
-    const failureCase = mockFailureCases.find(c => c.id === params.id);
+export default async function CaseDetailPage({ params }: PageProps) {
+    const { id } = await params;
+    const failureCase = mockFailureCases.find(c => c.id === id);
 
     if (!failureCase) {
         notFound();
@@ -187,17 +189,20 @@ export default function CaseDetailPage({ params }: PageProps) {
                                 Similar Cases
                             </h3>
                             <ul className="space-y-3">
-                                {/* Mock functionality for related cases */}
-                                <li className="text-sm">
-                                    <Link href="#" className="hover:text-[var(--accent-primary)] text-[var(--text-primary)] block truncate">
-                                        Gradient Explosion in LLaMA-65B
-                                    </Link>
-                                </li>
-                                <li className="text-sm">
-                                    <Link href="#" className="hover:text-[var(--accent-primary)] text-[var(--text-primary)] block truncate">
-                                        Torch.save timeout on rank 0
-                                    </Link>
-                                </li>
+                                {mockFailureCases
+                                    .filter(c => c.failure_type === failureCase.failure_type && c.id !== failureCase.id)
+                                    .slice(0, 3)
+                                    .map(c => (
+                                        <li key={c.id} className="text-sm">
+                                            <Link href={`/cases/${c.id}`} className="hover:text-[var(--accent-primary)] text-[var(--text-primary)] block truncate">
+                                                {c.title}
+                                            </Link>
+                                        </li>
+                                    ))
+                                }
+                                {mockFailureCases.filter(c => c.failure_type === failureCase.failure_type && c.id !== failureCase.id).length === 0 && (
+                                    <li className="text-sm text-[var(--text-secondary)]">No similar cases found</li>
+                                )}
                             </ul>
                         </div>
                     </div>

@@ -7,7 +7,13 @@ import { mockFailureCases } from "@/lib/mockData";
 
 export function CommandPalette() {
     const [open, setOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const router = useRouter();
+
+    // Prevent hydration mismatch by only rendering after client mount
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Toggle with Cmd+K
     useEffect(() => {
@@ -26,6 +32,9 @@ export function CommandPalette() {
         setOpen(false);
         command();
     };
+
+    // Don't render anything on server to prevent hydration mismatch
+    if (!mounted) return null;
 
     return (
         <>
