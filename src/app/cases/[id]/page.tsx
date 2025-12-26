@@ -23,7 +23,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title: failureCase.title,
             description: failureCase.summary,
             type: 'article',
-            authors: ['AI Infra Engineers']
+            authors: ['AI Infra Engineers'],
+            images: [
+                {
+                    url: `/api/og?title=${encodeURIComponent(failureCase.title)}&type=${encodeURIComponent(failureCase.failure_type)}`,
+                    width: 1200,
+                    height: 630,
+                }
+            ]
         }
     };
 }

@@ -141,22 +141,51 @@ export default function CalculatorPage() {
                         </div>
                         <p className="text-sm text-[var(--text-secondary)] mb-6">Per Replica (No Sharding)</p>
 
-                        <div className="border-t border-[var(--border-default)] pt-6 space-y-4">
-                            <div className="flex justify-between">
-                                <span className="text-sm text-[var(--text-secondary)]">Model Weights</span>
-                                <span className="font-mono">{results.weights} GB</span>
+                        <div className="border-t border-[var(--border-default)] pt-6 space-y-6">
+                            {/* Visual Stacked Bar Chart */}
+                            <div>
+                                <div className="flex w-full h-8 rounded overflow-hidden mb-2 font-mono text-[10px] text-black font-bold">
+                                    <div style={{ width: `${(Number(results.weights) / Number(results.total)) * 100}%` }} className="bg-[var(--accent-primary)] h-full flex items-center justify-center overflow-hidden" title="Weights">W</div>
+                                    <div style={{ width: `${(Number(results.grads) / Number(results.total)) * 100}%` }} className="bg-[var(--accent-secondary)] h-full opacity-80 flex items-center justify-center overflow-hidden" title="Gradients">G</div>
+                                    <div style={{ width: `${(Number(results.opt) / Number(results.total)) * 100}%` }} className="bg-[var(--status-warning)] h-full flex items-center justify-center overflow-hidden" title="Optimizer States">O</div>
+                                    <div style={{ width: `${(Number(results.act) / Number(results.total)) * 100}%` }} className="bg-[var(--status-info)] h-full opacity-60 flex items-center justify-center overflow-hidden" title="Activations">A</div>
+                                </div>
+                                <div className="flex justify-between text-[10px] text-[var(--text-secondary)] font-mono uppercase tracking-wider">
+                                    <span>Usage Composition</span>
+                                    <span>100% (Full VRAM)</span>
+                                </div>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-sm text-[var(--text-secondary)]">Gradients</span>
-                                <span className="font-mono">{results.grads} GB</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-sm text-[var(--text-secondary)]">Optimizer States</span>
-                                <span className="font-mono text-[var(--status-warning)]">{results.opt} GB</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span className="text-sm text-[var(--text-secondary)]">Activations (Est.)</span>
-                                <span className="font-mono text-[var(--status-info)]">~{results.act} GB</span>
+
+                            {/* Legend / Breakdown */}
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center text-sm">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[var(--accent-primary)]"></div>
+                                        <span className="text-[var(--text-secondary)]">Model Weights</span>
+                                    </div>
+                                    <span className="font-mono">{results.weights} GB</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[var(--accent-secondary)] opacity-80"></div>
+                                        <span className="text-[var(--text-secondary)]">Gradients</span>
+                                    </div>
+                                    <span className="font-mono">{results.grads} GB</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[var(--status-warning)]"></div>
+                                        <span className="text-[var(--text-secondary)]">Optimizer States</span>
+                                    </div>
+                                    <span className="font-mono text-[var(--status-warning)]">{results.opt} GB</span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3 h-3 rounded-full bg-[var(--status-info)] opacity-60"></div>
+                                        <span className="text-[var(--text-secondary)]">Activations (Est.)</span>
+                                    </div>
+                                    <span className="font-mono text-[var(--status-info)]">~{results.act} GB</span>
+                                </div>
                             </div>
                         </div>
                     </Card>
