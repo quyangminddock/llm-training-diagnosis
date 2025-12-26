@@ -1,25 +1,27 @@
+@import "tailwindcss";
+
 :root {
   /* Engineering Theme - Dark Mode */
   --bg-primary: #0d1117;
   --bg-secondary: #010409;
   --bg-card: #161b22;
   --bg-hover: #21262d;
-  
+
   --text-primary: #c9d1d9;
   --text-secondary: #8b949e;
   --text-inverse: #f0f6fc;
-  
+
   --border-default: #30363d;
   --border-active: #58a6ff;
-  
+
   --accent-primary: #2f81f7;
   --accent-secondary: #1f6feb;
-  
+
   --status-success: #238636;
   --status-warning: #d29922;
   --status-error: #da3633;
   --status-info: #58a6ff;
-  
+
   --code-bg: #0d1117;
   --code-font: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
 }
@@ -43,7 +45,8 @@ a {
   text-decoration: none;
 }
 
-code, pre {
+code,
+pre {
   font-family: var(--code-font);
 }
 
@@ -51,13 +54,50 @@ code, pre {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
 }
 
-.text-sm { font-size: 0.875rem; }
-.text-lg { font-size: 1.125rem; }
-.font-bold { font-weight: 600; }
-.text-secondary { color: var(--text-secondary); }
+/* Responsive flex layout */
+.flex-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .flex-layout {
+    flex-direction: row;
+    gap: 2rem;
+  }
+}
+
+/* Sidebar */
+.sidebar {
+  width: 100%;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    width: 16rem;
+  }
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.font-bold {
+  font-weight: 600;
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
 
 .card {
   background: var(--bg-card);

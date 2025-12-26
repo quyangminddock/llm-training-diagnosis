@@ -20,10 +20,10 @@ export default function CasesPage() {
     }, [selectedType, selectedFramework]);
 
     return (
-        <div className="container py-8 flex flex-col md:flex-row gap-8" style={{ display: 'flex', gap: '2rem' }}>
+        <div className="container flex-layout" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
 
             {/* Sidebar Filters */}
-            <aside className="w-full md:w-64 flex-shrink-0" style={{ width: '16rem', flexShrink: 0 }}>
+            <aside className="sidebar">
                 <div className="sticky top-4">
                     <h2 className="text-lg font-bold mb-4 text-[var(--text-inverse)]">Filters</h2>
 

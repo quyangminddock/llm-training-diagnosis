@@ -133,58 +133,78 @@ export default function CalculatorPage() {
 
                 {/* Results Panel */}
                 <div className="flex flex-col gap-6" style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <Card className="flex-1 bg-[rgba(22,27,34,0.8)]">
+                    <Card className="flex-1 bg-[rgba(22,27,34,0.8)] border border-[var(--border-default)]">
                         <h2 className="text-xl font-bold mb-6 text-[var(--text-inverse)]">Estimated VRAM</h2>
 
                         <div className="text-5xl font-bold text-[var(--accent-primary)] mb-2">
                             {results.total} <span className="text-2xl text-[var(--text-secondary)]">GB</span>
                         </div>
-                        <p className="text-sm text-[var(--text-secondary)] mb-6">Per Replica (No Sharding)</p>
+                        <p className="text-sm text-[var(--text-secondary)] mb-8">Per Replica (No Sharding)</p>
 
-                        <div className="border-t border-[var(--border-default)] pt-6 space-y-6">
+                        <div className="space-y-8">
                             {/* Visual Stacked Bar Chart */}
                             <div>
-                                <div className="flex w-full h-8 rounded overflow-hidden mb-2 font-mono text-[10px] text-black font-bold">
-                                    <div style={{ width: `${(Number(results.weights) / Number(results.total)) * 100}%` }} className="bg-[var(--accent-primary)] h-full flex items-center justify-center overflow-hidden" title="Weights">W</div>
-                                    <div style={{ width: `${(Number(results.grads) / Number(results.total)) * 100}%` }} className="bg-[var(--accent-secondary)] h-full opacity-80 flex items-center justify-center overflow-hidden" title="Gradients">G</div>
-                                    <div style={{ width: `${(Number(results.opt) / Number(results.total)) * 100}%` }} className="bg-[var(--status-warning)] h-full flex items-center justify-center overflow-hidden" title="Optimizer States">O</div>
-                                    <div style={{ width: `${(Number(results.act) / Number(results.total)) * 100}%` }} className="bg-[var(--status-info)] h-full opacity-60 flex items-center justify-center overflow-hidden" title="Activations">A</div>
+                                <div className="flex w-full h-12 rounded-lg overflow-hidden mb-3 bg-[var(--bg-secondary)] ring-1 ring-[var(--border-default)] shadow-inner">
+                                    <div
+                                        style={{ width: `${(Number(results.weights) / Number(results.total)) * 100}%` }}
+                                        className="bg-gradient-to-r from-blue-600 to-blue-500 h-full flex items-center justify-center transition-all duration-500 ease-out group relative cursor-help"
+                                    >
+                                        <span className="text-xs font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md">Weights</span>
+                                    </div>
+                                    <div
+                                        style={{ width: `${(Number(results.grads) / Number(results.total)) * 100}%` }}
+                                        className="bg-gradient-to-r from-purple-600 to-purple-500 h-full flex items-center justify-center transition-all duration-500 ease-out group relative cursor-help"
+                                    >
+                                        <span className="text-xs font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md">Grads</span>
+                                    </div>
+                                    <div
+                                        style={{ width: `${(Number(results.opt) / Number(results.total)) * 100}%` }}
+                                        className="bg-gradient-to-r from-yellow-600 to-yellow-500 h-full flex items-center justify-center transition-all duration-500 ease-out group relative cursor-help"
+                                    >
+                                        <span className="text-xs font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md">Opt</span>
+                                    </div>
+                                    <div
+                                        style={{ width: `${(Number(results.act) / Number(results.total)) * 100}%` }}
+                                        className="bg-gradient-to-r from-teal-600 to-teal-500 h-full flex items-center justify-center transition-all duration-500 ease-out group relative cursor-help"
+                                    >
+                                        <span className="text-xs font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md">Act</span>
+                                    </div>
                                 </div>
-                                <div className="flex justify-between text-[10px] text-[var(--text-secondary)] font-mono uppercase tracking-wider">
+                                <div className="flex justify-between text-[10px] text-[var(--text-secondary)] font-mono uppercase tracking-wider px-1">
                                     <span>Usage Composition</span>
-                                    <span>100% (Full VRAM)</span>
+                                    <span>Total: {results.total} GB</span>
                                 </div>
                             </div>
 
                             {/* Legend / Breakdown */}
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-[var(--accent-primary)]"></div>
-                                        <span className="text-[var(--text-secondary)]">Model Weights</span>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="p-3 rounded bg-[var(--bg-secondary)] border border-[var(--border-default)]">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                                        <span className="text-xs font-bold text-[var(--text-secondary)]">Weights</span>
                                     </div>
-                                    <span className="font-mono">{results.weights} GB</span>
+                                    <div className="text-lg font-mono font-medium text-[var(--text-primary)]">{results.weights} GB</div>
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-[var(--accent-secondary)] opacity-80"></div>
-                                        <span className="text-[var(--text-secondary)]">Gradients</span>
+                                <div className="p-3 rounded bg-[var(--bg-secondary)] border border-[var(--border-default)]">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                                        <span className="text-xs font-bold text-[var(--text-secondary)]">Gradients</span>
                                     </div>
-                                    <span className="font-mono">{results.grads} GB</span>
+                                    <div className="text-lg font-mono font-medium text-[var(--text-primary)]">{results.grads} GB</div>
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-[var(--status-warning)]"></div>
-                                        <span className="text-[var(--text-secondary)]">Optimizer States</span>
+                                <div className="p-3 rounded bg-[var(--bg-secondary)] border border-[var(--border-default)]">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                                        <span className="text-xs font-bold text-[var(--text-secondary)]">Optimizer</span>
                                     </div>
-                                    <span className="font-mono text-[var(--status-warning)]">{results.opt} GB</span>
+                                    <div className="text-lg font-mono font-medium text-[var(--text-primary)]">{results.opt} GB</div>
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-[var(--status-info)] opacity-60"></div>
-                                        <span className="text-[var(--text-secondary)]">Activations (Est.)</span>
+                                <div className="p-3 rounded bg-[var(--bg-secondary)] border border-[var(--border-default)]">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <div className="w-2 h-2 rounded-full bg-teal-500"></div>
+                                        <span className="text-xs font-bold text-[var(--text-secondary)]">Activations</span>
                                     </div>
-                                    <span className="font-mono text-[var(--status-info)]">~{results.act} GB</span>
+                                    <div className="text-lg font-mono font-medium text-[var(--text-primary)]">~{results.act} GB</div>
                                 </div>
                             </div>
                         </div>
